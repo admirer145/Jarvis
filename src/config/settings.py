@@ -1,5 +1,6 @@
 from pydantic_settings import BaseSettings
 from typing import Optional
+from functools import lru_cache
 
 class Settings(BaseSettings):
     # API Settings
@@ -12,9 +13,10 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     
     # LLM Settings
-    OPENAI_API_KEY: str
-    MODEL_NAME: str = "gpt-3.5-turbo"
+    HUGGINGFACE_API_KEY: str
+    MODEL_NAME: str = "facebook/opt-350m"  # Changed to a completely open model
     TEMPERATURE: float = 0.7
+    MAX_LENGTH: int = 2048
     
     # Database
     DATABASE_URL: str
@@ -26,4 +28,8 @@ class Settings(BaseSettings):
         env_file = ".env"
         case_sensitive = True
 
-settings = Settings() 
+@lru_cache()
+def get_settings() -> Settings:
+    return Settings()
+
+settings = get_settings() 
